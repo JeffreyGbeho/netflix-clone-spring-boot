@@ -21,7 +21,7 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final JwtProvider jwtProvider;
 
-    public User register(RegisterDto registerDto) {
+    public String register(RegisterDto registerDto) {
         // Check if user already exists
         User userExists = this.userRepository.findByEmail(registerDto.getEmail()).orElse(null);
 
@@ -37,17 +37,14 @@ public class AuthService {
         newUser.setCreatedAt(now);
         newUser.setUpdatedAt(now);
 
-        return this.userRepository.save(newUser);
+        User user = this.userRepository.save(newUser);
+
+        return jwtProvider.createToken(user);
     }
 
-    public Object login(RegisterDto registerDto) {
-        try {
-            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(registerDto.getEmail(), registerDto.getPassword()));
-            String token = jwtProvider.createToken((User) authentication.getPrincipal());
-            return token;
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            return e;
-        }
+    public String login(RegisterDto registerDto) {
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(registerDto.getEmail(), registerDto.getPassword()));
+        String token = jwtProvider.createToken((User) authentication.getPrincipal());
+        return token;
     }
 }

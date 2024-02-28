@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.Date;
+import java.util.Set;
 
 @Entity
 @Table(name = "_user")
@@ -18,12 +19,17 @@ import java.util.Date;
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long userId;
     @Column(nullable = false, unique = true)
     private String email;
     private String password;
     private Date createdAt;
     private Date updatedAt;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "user_profile", joinColumns = { @JoinColumn(name = "userId") }, inverseJoinColumns = { @JoinColumn(name = "profileId") })
+    private Set<Profile> profiles;
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

@@ -1,6 +1,6 @@
 package com.app.netflixapi.controllers;
 
-import com.app.netflixapi.dtos.registerDto;
+import com.app.netflixapi.dtos.RegisterDto;
 import com.app.netflixapi.entities.User;
 import com.app.netflixapi.services.AuthService;
 import lombok.RequiredArgsConstructor;
@@ -16,12 +16,12 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/register")
-    public User register(@RequestBody registerDto registerDto) {
+    public User register(@RequestBody RegisterDto registerDto) {
         return this.authService.register(registerDto);
     }
 
     @PostMapping("/login")
-    public Object login(@RequestBody registerDto registerDto) {
+    public Object login(@RequestBody RegisterDto registerDto) {
         return this.authService.login(registerDto);
     }
 }

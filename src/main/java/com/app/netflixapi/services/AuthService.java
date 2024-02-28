@@ -1,7 +1,7 @@
 package com.app.netflixapi.services;
 
 import com.app.netflixapi.config.JwtProvider;
-import com.app.netflixapi.dtos.registerDto;
+import com.app.netflixapi.dtos.RegisterDto;
 import com.app.netflixapi.entities.User;
 import com.app.netflixapi.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +21,7 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final JwtProvider jwtProvider;
 
-    public User register(registerDto registerDto) {
+    public User register(RegisterDto registerDto) {
         // Check if user already exists
         User userExists = this.userRepository.findByEmail(registerDto.getEmail()).orElse(null);
 
@@ -40,7 +40,7 @@ public class AuthService {
         return this.userRepository.save(newUser);
     }
 
-    public Object login(registerDto registerDto) {
+    public Object login(RegisterDto registerDto) {
         try {
             Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(registerDto.getEmail(), registerDto.getPassword()));
             String token = jwtProvider.createToken((User) authentication.getPrincipal());

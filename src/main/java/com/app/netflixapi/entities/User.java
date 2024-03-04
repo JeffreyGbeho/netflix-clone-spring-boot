@@ -1,5 +1,6 @@
 package com.app.netflixapi.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,6 +31,11 @@ public class User implements UserDetails {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Profile> profiles = new HashSet<>();
+
+    @JsonIgnore
+    public Set<Profile> getProfiles() {
+        return profiles;
+    }
 
 
     @Override

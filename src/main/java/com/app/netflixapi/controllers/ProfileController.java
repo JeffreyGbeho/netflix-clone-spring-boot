@@ -16,30 +16,29 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class ProfileController {
     private final ProfileService profileService;
-    private final UserRepository userRepository;
 
     @PostMapping
     public Profile addProfile(@RequestBody ProfileDto profileDto) {
-        return this.profileService.addProfile(profileDto);
+        return profileService.addProfile(profileDto);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteProfile(@PathParam("id") Long profileId) {
-        this.profileService.deleteProfile(profileId);
+    public void deleteProfile(@PathVariable Long id) {
+        profileService.deleteProfile(id);
     }
 
-    @PutMapping
-    public Profile updateProfile(@RequestBody Profile profile) {
-        return this.profileService.updateProfile(profile);
+    @PutMapping("/{id}")
+    public Profile updateProfile(@PathVariable Long id, @RequestBody Profile updateProfile) {
+        return profileService.updateProfile(id, updateProfile);
     }
 
     @GetMapping
     public Set<Profile> getAllProfile() {
-        return this.profileService.getAllProfile();
+        return profileService.getAllProfile();
     }
 
-    @GetMapping("/")
-    public User getUserAuthenticated() {
-        return this.userRepository.findByEmail("test@test.com").orElse(null);
+    @GetMapping("/{id}")
+    public Profile getProfileById(@PathVariable Long id) {
+        return profileService.getProfileById(id);
     }
 }

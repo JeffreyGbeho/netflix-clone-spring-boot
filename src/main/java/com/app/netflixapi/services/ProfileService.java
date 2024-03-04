@@ -3,6 +3,7 @@ package com.app.netflixapi.services;
 import com.app.netflixapi.dtos.ProfileDto;
 import com.app.netflixapi.entities.Profile;
 import com.app.netflixapi.entities.User;
+import com.app.netflixapi.exceptions.ProfileNotFound;
 import com.app.netflixapi.repositories.ProfileRepository;
 import com.app.netflixapi.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,33 +21,45 @@ public class ProfileService {
 
     @Transactional
     public Profile addProfile(ProfileDto profileDto) {
-        User user = this.userService.getAuthenticatedUser();
+        User user = userService.getAuthenticatedUser();
 
         Profile profile = new Profile();
         profile.setName(profileDto.getName());
         profile.setChild(profileDto.isChild());
+        profile.setUser(user);
 
-        Profile profileSaved = this.profileRepository.save(profile);
-
-        Set<Profile> set = user.getProfiles();
-        set.add(profileSaved);
-        user.setProfiles(set);
-        userRepository.save(user);
+        Profile profileSaved = profileRepository.save(profile);
 
         return profileSaved;
     }
 
-    public Profile updateProfile(Profile profileUpdated) {
-        return this.profileRepository.save(profileUpdated);
+    public Profile updateProfile(Long id, Profile updatedProfile) {
+        Profile profile = profileRepository.findById(id).orElseThrow(() -> new ProfileNotFound("Profile not found"));
+
+        if (updatedProfile.getName() != null) {
+            profile.setName(updatedProfile.getName());
+        }
+        if (updatedProfile.isChild() != profile.isChild()) {
+            profile.setChild(updatedProfile.isChild());
+        }
+        if (updatedProfile.getPictureUrl() != null) {
+            profile.setPictureUrl(updatedProfile.getPictureUrl());
+        }
+
+        return profileRepository.save(profile);
     }
 
-    public void deleteProfile(Long profileId) {
-        this.profileRepository.deleteById(profileId);
+    public void deleteProfile(Long id) {
+        profileRepository.deleteById(id);
     }
 
     public Set<Profile> getAllProfile() {
-        User user = this.userService.getAuthenticatedUser();
+        User user = userService.getAuthenticatedUser();
 
         return user.getProfiles();
+    }
+
+    public Profile getProfileById(Long id) {
+        return profileRepository.findById(id).orElseThrow(() -> new ProfileNotFound("Profile not found"));
     }
 }

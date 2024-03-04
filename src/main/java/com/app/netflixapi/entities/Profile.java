@@ -11,13 +11,13 @@ import java.util.Set;
 @Setter
 public class Profile {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long profileId;
+    @GeneratedValue
+    private Long id;
     private String name;
     private boolean child;
     private String pictureUrl;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "profile_movie", joinColumns = { @JoinColumn(name = "profileId") }, inverseJoinColumns = { @JoinColumn(name = "movieId") })
-    private Set<Movie> favoriteMovies;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 }

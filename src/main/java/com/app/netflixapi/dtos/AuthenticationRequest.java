@@ -1,13 +1,13 @@
 package com.app.netflixapi.dtos;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
 @AllArgsConstructor
-public class RegisterDto {
+@NoArgsConstructor
+@Builder
+public class AuthenticationRequest {
     private String email;
     private String password;
 }

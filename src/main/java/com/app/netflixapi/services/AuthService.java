@@ -1,8 +1,12 @@
 package com.app.netflixapi.services;
 
-import com.app.netflixapi.config.JwtProvider;
-import com.app.netflixapi.dtos.RegisterDto;
+import com.app.netflixapi.config.JwtService;
+import com.app.netflixapi.dtos.AuthenticationRequest;
+import com.app.netflixapi.dtos.AuthenticationResponse;
+import com.app.netflixapi.dtos.RegisterRequest;
+import com.app.netflixapi.entities.Role;
 import com.app.netflixapi.entities.User;
+import com.app.netflixapi.exceptions.UserAlreadyExists;
 import com.app.netflixapi.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -19,32 +23,34 @@ public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
-    private final JwtProvider jwtProvider;
+    private final JwtService jwtService;
 
-    public String register(RegisterDto registerDto) {
+    public AuthenticationResponse register(RegisterRequest request) {
         // Check if user already exists
-        User userExists = this.userRepository.findByEmail(registerDto.getEmail()).orElse(null);
+        User userExists = this.userRepository.findByEmail(request.getEmail()).orElse(null);
 
         if (userExists != null) {
-            throw new RuntimeException("User already exists");
+            throw new UserAlreadyExists("User already exists");
         }
 
         // Save the new user
         User newUser = new User();
-        newUser.setEmail(registerDto.getEmail());
-        newUser.setPassword(passwordEncoder.encode(registerDto.getPassword()));
+        newUser.setEmail(request.getEmail());
+        newUser.setPassword(passwordEncoder.encode(request.getPassword()));
         Date now = new Date();
         newUser.setCreatedAt(now);
         newUser.setUpdatedAt(now);
+        newUser.setRole(Role.USER);
 
         User user = this.userRepository.save(newUser);
 
-        return jwtProvider.createToken(user);
+        String token = jwtService.generateToken(user);
+        return AuthenticationResponse.builder().token(token).build();
     }
 
-    public String login(RegisterDto registerDto) {
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(registerDto.getEmail(), registerDto.getPassword()));
-        String token = jwtProvider.createToken((User) authentication.getPrincipal());
-        return token;
+    public AuthenticationResponse login(AuthenticationRequest request) {
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+        String token = jwtService.generateToken((User) authentication.getPrincipal());
+        return AuthenticationResponse.builder().token(token).build();
     }
 }

@@ -9,8 +9,8 @@ import lombok.Setter;
 @Setter
 public class Category {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long categoryId;
+    @GeneratedValue
+    private Long id;
     @Column(nullable = false)
     private String name;
 }

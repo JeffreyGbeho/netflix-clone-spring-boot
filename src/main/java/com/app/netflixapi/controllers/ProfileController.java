@@ -7,6 +7,7 @@ import com.app.netflixapi.repositories.UserRepository;
 import com.app.netflixapi.services.ProfileService;
 import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Set;
@@ -18,8 +19,8 @@ public class ProfileController {
     private final ProfileService profileService;
 
     @PostMapping
-    public Profile addProfile(@RequestBody ProfileDto profileDto) {
-        return profileService.addProfile(profileDto);
+    public ResponseEntity<Profile> addProfile(@RequestBody ProfileDto profileDto) {
+        return ResponseEntity.ok(profileService.addProfile(profileDto));
     }
 
     @DeleteMapping("/{id}")
@@ -28,17 +29,17 @@ public class ProfileController {
     }
 
     @PutMapping("/{id}")
-    public Profile updateProfile(@PathVariable Long id, @RequestBody Profile updateProfile) {
-        return profileService.updateProfile(id, updateProfile);
+    public ResponseEntity<Profile> updateProfile(@PathVariable Long id, @RequestBody Profile updateProfile) {
+        return ResponseEntity.ok(profileService.updateProfile(id, updateProfile));
     }
 
     @GetMapping
-    public Set<Profile> getAllProfile() {
-        return profileService.getAllProfile();
+    public ResponseEntity<Set<Profile>> getAllProfile() {
+        return ResponseEntity.ok(profileService.getAllProfile());
     }
 
     @GetMapping("/{id}")
-    public Profile getProfileById(@PathVariable Long id) {
-        return profileService.getProfileById(id);
+    public ResponseEntity<Profile> getProfileById(@PathVariable Long id) {
+        return ResponseEntity.ok(profileService.getProfileById(id));
     }
 }

@@ -34,4 +34,12 @@ public class Movie {
     public Set<Category> getCategories() {
         return categories;
     }
+
+    @ManyToMany(mappedBy = "favourites")
+    private Set<User> userFavourites = new HashSet<>();
+
+    @JsonIgnore
+    public Set<User> getUserFavourites() {
+        return userFavourites;
+    }
 }

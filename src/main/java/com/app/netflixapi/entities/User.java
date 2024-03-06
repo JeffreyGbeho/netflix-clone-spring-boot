@@ -29,6 +29,17 @@ public class User implements UserDetails {
     private Date createdAt;
     private Date updatedAt;
 
+    @ManyToMany@JoinTable(
+            name = "user_movie",
+            joinColumns = { @JoinColumn(name = "user_id") },
+            inverseJoinColumns = { @JoinColumn(name = "movie_id") }
+    )
+    private Set<Movie> favourites = new HashSet<>();
+
+    @JsonIgnore
+    public Set<Movie> getFavourites() {
+        return favourites;
+    }
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Profile> profiles = new HashSet<>();

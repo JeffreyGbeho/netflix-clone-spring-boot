@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/v1/movie")
@@ -32,4 +33,23 @@ public class MovieController {
         return ResponseEntity.ok(movieService.getMovieById(id));
     }
 
+    @PutMapping("/{id}/favourite/add")
+    public void addMovieToList(@PathVariable Long id) {
+        movieService.addMovieToList(id);
+    }
+
+    @PutMapping("/{id}/favourite/remove")
+    public void removeMovieToList(@PathVariable Long id) {
+        movieService.removeMovieToList(id);
+    }
+
+    @GetMapping("/favourites")
+    public ResponseEntity<Set<Movie>> getFavourites() {
+        return ResponseEntity.ok(movieService.getFavourites());
+    }
+
+    @GetMapping("/category/{categoryName}")
+    public ResponseEntity<Set<Movie>> getMoviesByCategory(@PathVariable String categoryName) {
+        return ResponseEntity.ok(movieService.getMoviesByCategory(categoryName));
+    }
 }

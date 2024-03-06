@@ -22,7 +22,7 @@ public class Movie {
     private String url;
     private Integer duration;
 
-    @ManyToMany(cascade = { CascadeType.ALL })
+    @ManyToMany
     @JoinTable(
             name = "movie_categories",
             joinColumns = { @JoinColumn(name = "movie_id") },

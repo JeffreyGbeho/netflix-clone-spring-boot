@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -41,13 +42,20 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         }
     }
 
-    private void createMovies() {
+    @Transactional
+    public void createMovies() {
         Movie movie = new Movie();
         movie.setAuthor("Blender Studio");
         movie.setDescription("Film prenant dans lequel on s'ennuie pas une seconde");
         movie.setDuration(4000);
         movie.setLimitAge(12);
         movie.setTitle("String");
+        Set<Category> categories = new HashSet<>();
+        Category c = categoryRepository.findByName("Action").orElse(null);
+        if (c != null) {
+            categories.add(c);
+        }
+        movie.setCategories(categories);
 
         movieRepository.save(movie);
     }

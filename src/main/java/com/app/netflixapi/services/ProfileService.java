@@ -23,10 +23,16 @@ public class ProfileService {
     public Profile addProfile(ProfileDto profileDto) {
         User user = userService.getAuthenticatedUser();
 
+        Profile profileExists = profileRepository.findByNameAndUserId(profileDto.getName(), user.getId()).orElse(null);
+        if (profileExists != null) {
+            throw new RuntimeException("Profile has already saved with this name");
+        }
+
         Profile profile = new Profile();
         profile.setName(profileDto.getName());
         profile.setChild(profileDto.isChild());
         profile.setUser(user);
+        profile.setPictureUrl("https://occ-0-6601-56.1.nflxso.net/dnm/api/v6/vN7bi_My87NPKvsBoib006Llxzg/AAAABZumJ3wvSKM7od-r3UjhVF9j3yteWlQYA-51F3SNoI682llhul1Xf_CUkMnfP_17Md2lpOOhbwHeGufvo8kOTjptoS_bcwtniHKz.png?r=e6e)");
 
         Profile profileSaved = profileRepository.save(profile);
 

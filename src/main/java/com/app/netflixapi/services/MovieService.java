@@ -3,9 +3,11 @@ package com.app.netflixapi.services;
 import com.app.netflixapi.config.AuthenticationUserProvider;
 import com.app.netflixapi.entities.Category;
 import com.app.netflixapi.entities.Movie;
+import com.app.netflixapi.entities.Profile;
 import com.app.netflixapi.entities.User;
 import com.app.netflixapi.repositories.CategoryRepository;
 import com.app.netflixapi.repositories.MovieRepository;
+import com.app.netflixapi.repositories.ProfileRepository;
 import com.app.netflixapi.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
@@ -26,6 +28,7 @@ public class MovieService {
     private final AuthenticationUserProvider authenticationUserProvider;
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
+    private final ProfileRepository profileRepository;
 
     private static final String FORMAT  = "classpath:videos/%s.mp4";
 
@@ -41,40 +44,47 @@ public class MovieService {
         return movieRepository.findById(id).orElseThrow();
     }
 
-    public void addMovieToList(Long id) {
-        String email = authenticationUserProvider.getAuthenticatedEmail();
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+    public void addMovieToList(Long id, Long profileId) {
+        Profile profile = this.getProfile(profileId);
 
         Movie movie = movieRepository.findById(id).orElseThrow();
-        Set<Movie> fav = user.getFavourites();
+        Set<Movie> fav = profile.getFavourites();
         fav.add(movie);
-        user.setFavourites(fav);
+        profile.setFavourites(fav);
 
-        userRepository.save(user);
+        profileRepository.save(profile);
     }
 
-    public void removeMovieToList(Long id) {
-        String email = authenticationUserProvider.getAuthenticatedEmail();
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+    public void removeMovieToList(Long id, Long profileId) {
+        Profile profile = this.getProfile(profileId);
 
         Movie movie = movieRepository.findById(id).orElseThrow();
-        Set<Movie> fav = user.getFavourites();
+        Set<Movie> fav = profile.getFavourites();
         fav.remove(movie);
-        user.setFavourites(fav);
+        profile.setFavourites(fav);
 
-        userRepository.save(user);
+        profileRepository.save(profile);
     }
 
-    public Set<Movie> getFavourites() {
-        String email = authenticationUserProvider.getAuthenticatedEmail();
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+    public Set<Movie> getFavourites(Long profileId) {
+        Profile profile = this.getProfile(profileId);
 
-        return user.getFavourites();
+        return profile.getFavourites();
     }
 
     public Set<Movie> getMoviesByCategory(String categoryName) {
         Category category = categoryRepository.findByName(categoryName).orElseThrow();
 
         return category.getMovies();
+    }
+
+    private Profile getProfile(Long profileId) {
+        String email = authenticationUserProvider.getAuthenticatedEmail();
+
+        Profile profile = profileRepository.findById(profileId).orElseThrow(() -> new RuntimeException("Profile not found"));
+
+        if (!profile.getUser().getEmail().equals(email)) {
+            throw new RuntimeException("Profile not match with user");
+        }
     }
 }

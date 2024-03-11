@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -26,5 +27,17 @@ public class Profile {
     @JsonIgnore
     public User getUser() {
         return user;
+    }
+
+    @ManyToMany@JoinTable(
+            name = "profile_movie",
+            joinColumns = { @JoinColumn(name = "profile_id") },
+            inverseJoinColumns = { @JoinColumn(name = "movie_id") }
+    )
+    private Set<Movie> favourites = new HashSet<>();
+
+    @JsonIgnore
+    public Set<Movie> getFavourites() {
+        return favourites;
     }
 }

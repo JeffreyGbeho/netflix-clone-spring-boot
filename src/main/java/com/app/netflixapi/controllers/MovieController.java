@@ -1,7 +1,9 @@
 package com.app.netflixapi.controllers;
 
+import com.app.netflixapi.dtos.FavouriteRequest;
 import com.app.netflixapi.entities.Movie;
 import com.app.netflixapi.services.MovieService;
+import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -34,18 +36,18 @@ public class MovieController {
     }
 
     @PutMapping("/{id}/favourite/add")
-    public void addMovieToList(@PathVariable Long id) {
-        movieService.addMovieToList(id);
+    public void addMovieToList(@PathVariable Long id, @RequestBody FavouriteRequest request) {
+        movieService.addMovieToList(id, request.getProfileId());
     }
 
     @PutMapping("/{id}/favourite/remove")
-    public void removeMovieToList(@PathVariable Long id) {
-        movieService.removeMovieToList(id);
+    public void removeMovieToList(@PathVariable Long id, @RequestBody FavouriteRequest request) {
+        movieService.removeMovieToList(id, request.getProfileId());
     }
 
     @GetMapping("/favourites")
-    public ResponseEntity<Set<Movie>> getFavourites() {
-        return ResponseEntity.ok(movieService.getFavourites());
+    public ResponseEntity<Set<Movie>> getFavourites(@PathParam(value = "id") Long profileId) {
+        return ResponseEntity.ok(movieService.getFavourites(profileId));
     }
 
     @GetMapping("/category/{categoryName}")

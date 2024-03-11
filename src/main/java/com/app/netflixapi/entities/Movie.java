@@ -36,10 +36,10 @@ public class Movie {
     }
 
     @ManyToMany(mappedBy = "favourites")
-    private Set<User> userFavourites = new HashSet<>();
+    private Set<Profile> profileFavourites = new HashSet<>();
 
     @JsonIgnore
-    public Set<User> getUserFavourites() {
-        return userFavourites;
+    public Set<Profile> getUserFavourites() {
+        return profileFavourites;
     }
 }

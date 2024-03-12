@@ -86,5 +86,7 @@ public class MovieService {
         if (!profile.getUser().getEmail().equals(email)) {
             throw new RuntimeException("Profile not match with user");
         }
+
+        return profile;
     }
 }

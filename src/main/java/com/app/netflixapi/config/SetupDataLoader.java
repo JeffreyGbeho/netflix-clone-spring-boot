@@ -46,12 +46,72 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
     public void createMovies() {
         Movie movie = new Movie();
         movie.setAuthor("Blender Studio");
-        movie.setDescription("Film prenant dans lequel on s'ennuie pas une seconde");
+        movie.setDescription("Un film sublime sur le printemps");
         movie.setDuration(4000);
         movie.setLimitAge(12);
         movie.setTitle("Spring");
         Set<Category> categories = new HashSet<>();
         Category c = categoryRepository.findByName("Action").orElse(null);
+        if (c != null) {
+            categories.add(c);
+        }
+        movie.setCategories(categories);
+
+        movieRepository.save(movie);
+
+        movie = new Movie();
+        movie.setAuthor("Blender Studio");
+        movie.setDescription("on vole c'est chouette");
+        movie.setDuration(5000);
+        movie.setLimitAge(3);
+        movie.setTitle("WING_IT");
+        categories = new HashSet<>();
+        c = categoryRepository.findByName("Action").orElse(null);
+        if (c != null) {
+            categories.add(c);
+        }
+        movie.setCategories(categories);
+
+        movieRepository.save(movie);
+
+        movie = new Movie();
+        movie.setAuthor("Blender Studio");
+        movie.setDescription("Spoon ? Tu veux dire une cuillère");
+        movie.setDuration(4000);
+        movie.setLimitAge(12);
+        movie.setTitle("Spoon");
+        categories = new HashSet<>();
+        c = categoryRepository.findByName("Action").orElse(null);
+        if (c != null) {
+            categories.add(c);
+        }
+        movie.setCategories(categories);
+
+        movieRepository.save(movie);
+
+        movie = new Movie();
+        movie.setAuthor("Blender Studio");
+        movie.setDescription("chargé les amis");
+        movie.setDuration(4000);
+        movie.setLimitAge(12);
+        movie.setTitle("CHARGE");
+        categories = new HashSet<>();
+        c = categoryRepository.findByName("Action").orElse(null);
+        if (c != null) {
+            categories.add(c);
+        }
+        movie.setCategories(categories);
+
+        movieRepository.save(movie);
+
+        movie = new Movie();
+        movie.setAuthor("Blender Studio");
+        movie.setDescription("L'agent qui est un barbershop");
+        movie.setDuration(4000);
+        movie.setLimitAge(12);
+        movie.setTitle("Agent_327_Operation_Barbershop");
+        categories = new HashSet<>();
+        c = categoryRepository.findByName("Action").orElse(null);
         if (c != null) {
             categories.add(c);
         }

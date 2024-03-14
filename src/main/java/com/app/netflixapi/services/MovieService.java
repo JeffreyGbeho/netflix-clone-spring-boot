@@ -4,19 +4,20 @@ import com.app.netflixapi.config.AuthenticationUserProvider;
 import com.app.netflixapi.entities.Category;
 import com.app.netflixapi.entities.Movie;
 import com.app.netflixapi.entities.Profile;
-import com.app.netflixapi.entities.User;
 import com.app.netflixapi.repositories.CategoryRepository;
 import com.app.netflixapi.repositories.MovieRepository;
 import com.app.netflixapi.repositories.ProfileRepository;
-import com.app.netflixapi.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import reactor.core.publisher.Mono;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Set;
 
@@ -26,14 +27,24 @@ public class MovieService {
     private final ResourceLoader resourceLoader;
     private final MovieRepository movieRepository;
     private final AuthenticationUserProvider authenticationUserProvider;
-    private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
     private final ProfileRepository profileRepository;
 
     private static final String FORMAT  = "classpath:videos/%s.mp4";
 
-    public Mono<Resource> getMovie(String title) {
-        return Mono.fromSupplier(() -> resourceLoader.getResource(String.format(FORMAT, title)));
+    public StreamingResponseBody streamingMovie(String title) throws IOException {
+        InputStream videoStream = this.getMovieFile(title);
+
+        StreamingResponseBody responseBody = outputStream -> {
+            byte[] buffer = new byte[1024];
+            int bytesRead;
+            while ((bytesRead = videoStream.read(buffer)) != -1) {
+                outputStream.write(buffer, 0, bytesRead);
+            }
+            videoStream.close();
+        };
+
+        return responseBody;
     }
 
     public List<Movie> getAllMovies() {
@@ -88,5 +99,18 @@ public class MovieService {
         }
 
         return profile;
+    }
+
+    private FileInputStream getMovieFile(String title) throws IOException {
+        Resource resource = resourceLoader.getResource(String.format(FORMAT, title));
+        String videoFilePath = resource.getFile().getAbsolutePath();
+
+        // Vérifier si la vidéo existe
+        File videoFile = new File(videoFilePath);
+        if (!videoFile.exists()) {
+            throw new RuntimeException("La vidéo demandée n'existe pas");
+        }
+
+        return new FileInputStream(videoFile);
     }
 }

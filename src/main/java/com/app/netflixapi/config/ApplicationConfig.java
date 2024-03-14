@@ -12,6 +12,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.context.RequestAttributeSecurityContextRepository;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -57,5 +58,10 @@ public class ApplicationConfig {
                         .allowCredentials(true);
             }
         };
+    }
+
+    @Bean
+    public RequestAttributeSecurityContextRepository getRequestAttributeSecurityContextRepository() {
+        return new RequestAttributeSecurityContextRepository();
     }
 }

@@ -49,7 +49,7 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         movie.setDescription("Film prenant dans lequel on s'ennuie pas une seconde");
         movie.setDuration(4000);
         movie.setLimitAge(12);
-        movie.setTitle("String");
+        movie.setTitle("Spring");
         Set<Category> categories = new HashSet<>();
         Category c = categoryRepository.findByName("Action").orElse(null);
         if (c != null) {

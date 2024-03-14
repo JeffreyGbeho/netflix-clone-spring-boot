@@ -5,12 +5,16 @@ import com.app.netflixapi.entities.Movie;
 import com.app.netflixapi.services.MovieService;
 import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.Response;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import reactor.core.publisher.Mono;
 
+import java.io.*;
 import java.util.List;
 import java.util.Set;
 
@@ -19,10 +23,17 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class MovieController {
    private final MovieService movieService;
+    private final ResourceLoader resourceLoader;
 
-    @GetMapping(value = "/{title}", produces = "video/mp4")
-    public Mono<Resource> getMovie(@PathVariable String title) {
-        return movieService.getMovie(title);
+    private static final String FORMAT  = "classpath:videos/%s.mp4";
+
+    @GetMapping("/streaming/{title}")
+    public ResponseEntity<StreamingResponseBody> getMovie(@PathVariable String title) throws IOException {
+        StreamingResponseBody responseBody = movieService.streamingMovie(title);
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(responseBody);
     }
 
     @GetMapping

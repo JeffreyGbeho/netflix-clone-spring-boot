@@ -16,11 +16,13 @@ public class Movie {
     @GeneratedValue
     private Long id;
     private String title;
+    private String filename;
     private String description;
     private Integer limitAge;
     private String author;
     private String url;
     private Integer duration;
+    private String thumbnailUrl;
 
     @ManyToMany
     @JoinTable(

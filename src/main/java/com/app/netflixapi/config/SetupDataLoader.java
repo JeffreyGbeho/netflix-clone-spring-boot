@@ -50,6 +50,8 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         movie.setDuration(4000);
         movie.setLimitAge(12);
         movie.setTitle("Spring");
+        movie.setFilename("Spring");
+        movie.setThumbnailUrl("https://i.ytimg.com/vi/MXZ6y9JADw0/maxresdefault.jpg");
         Set<Category> categories = new HashSet<>();
         Category c = categoryRepository.findByName("Action").orElse(null);
         if (c != null) {
@@ -64,7 +66,9 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         movie.setDescription("on vole c'est chouette");
         movie.setDuration(5000);
         movie.setLimitAge(3);
-        movie.setTitle("WING_IT");
+        movie.setTitle("Wing it");
+        movie.setFilename("WING_IT");
+        movie.setThumbnailUrl("https://i.ytimg.com/vi/u9lj-c29dxI/maxresdefault.jpg");
         categories = new HashSet<>();
         c = categoryRepository.findByName("Action").orElse(null);
         if (c != null) {
@@ -80,6 +84,8 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         movie.setDuration(4000);
         movie.setLimitAge(12);
         movie.setTitle("Spoon");
+        movie.setFilename("Spoon");
+        movie.setThumbnailUrl("https://i.vimeocdn.com/video/1441814213-6d73963d8a2e263f53bf2cc16d0c1e4cc218cf4e000b49cfaa929860e5de6cf9-d?f=webp");
         categories = new HashSet<>();
         c = categoryRepository.findByName("Action").orElse(null);
         if (c != null) {
@@ -94,7 +100,9 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         movie.setDescription("chargé les amis");
         movie.setDuration(4000);
         movie.setLimitAge(12);
-        movie.setTitle("CHARGE");
+        movie.setTitle("Charge");
+        movie.setFilename("CHARGE");
+        movie.setThumbnailUrl("https://ddz4ak4pa3d19.cloudfront.net/cache/3b/27/3b2766793754ad4b84335baa2653892e.jpg");
         categories = new HashSet<>();
         c = categoryRepository.findByName("Action").orElse(null);
         if (c != null) {
@@ -109,7 +117,9 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         movie.setDescription("L'agent qui est un barbershop");
         movie.setDuration(4000);
         movie.setLimitAge(12);
-        movie.setTitle("Agent_327_Operation_Barbershop");
+        movie.setTitle("Agent 327: Operation Barbershop");
+        movie.setFilename("Agent_327_Operation_Barbershop");
+        movie.setThumbnailUrl("https://ddz4ak4pa3d19.cloudfront.net/cache/3d/b2/3db2889cfd85ebd2168ce9f8815e4112.jpg");
         categories = new HashSet<>();
         c = categoryRepository.findByName("Action").orElse(null);
         if (c != null) {

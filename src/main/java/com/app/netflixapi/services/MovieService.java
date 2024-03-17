@@ -32,8 +32,10 @@ public class MovieService {
 
     private static final String FORMAT  = "classpath:videos/%s.mp4";
 
-    public StreamingResponseBody streamingMovie(String title) throws IOException {
-        InputStream videoStream = this.getMovieFile(title);
+    public StreamingResponseBody streamingMovie(Long movieId) throws IOException {
+        Movie movie = movieRepository.findById(movieId).orElseThrow(() -> new RuntimeException("Movie not found"));
+
+        InputStream videoStream = this.getMovieFile(movie.getFilename());
 
         StreamingResponseBody responseBody = outputStream -> {
             byte[] buffer = new byte[1024];

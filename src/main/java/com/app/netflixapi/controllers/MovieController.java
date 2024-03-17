@@ -23,13 +23,10 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class MovieController {
    private final MovieService movieService;
-    private final ResourceLoader resourceLoader;
 
-    private static final String FORMAT  = "classpath:videos/%s.mp4";
-
-    @GetMapping("/streaming/{title}")
-    public ResponseEntity<StreamingResponseBody> getMovie(@PathVariable String title) throws IOException {
-        StreamingResponseBody responseBody = movieService.streamingMovie(title);
+    @GetMapping("/streaming/{movieId}")
+    public ResponseEntity<StreamingResponseBody> getMovie(@PathVariable Long movieId) throws IOException {
+        StreamingResponseBody responseBody = movieService.streamingMovie(movieId);
 
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)

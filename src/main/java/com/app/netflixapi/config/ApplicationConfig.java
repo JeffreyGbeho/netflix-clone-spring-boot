@@ -4,6 +4,7 @@ import com.app.netflixapi.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -13,6 +14,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.context.RequestAttributeSecurityContextRepository;
+import org.springframework.web.servlet.config.annotation.CorsRegistration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -20,6 +22,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @RequiredArgsConstructor
 public class ApplicationConfig {
     private final UserRepository userRepository;
+    private final Environment env;
 
     @Bean
     public UserDetailsService userDetailsService() {
@@ -48,14 +51,18 @@ public class ApplicationConfig {
     @Bean
     public WebMvcConfigurer corsConfigurer()
     {
+        String[] urls = env.getProperty("cors.allowedOrigins").split(",");
+
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**")
-                        .allowedOrigins("http://localhost:4200")
+                CorsRegistration reg = registry.addMapping("/api/**")
                         .allowedMethods("GET", "POST", "PUT", "DELETE")
-                        .allowedHeaders("Origin", "Content-Type", "Accept", "Authorization")
-                        .allowCredentials(true);
+                        .allowedHeaders("Origin", "Content-Type", "Accept", "Authorization");
+
+                for (String url : urls) {
+                    reg.allowedOrigins(url);
+                }
             }
         };
     }

@@ -1,13 +1,12 @@
 package com.app.netflixapi.services;
 
 import com.app.netflixapi.config.JwtService;
-import com.app.netflixapi.dtos.AuthenticationRequest;
 import com.app.netflixapi.dtos.AuthenticationResponse;
-import com.app.netflixapi.dtos.RegisterRequest;
 import com.app.netflixapi.entities.Role;
 import com.app.netflixapi.entities.User;
 import com.app.netflixapi.exceptions.UserAlreadyExists;
 import com.app.netflixapi.repositories.UserRepository;
+import com.app.netflixapi.services.interfaces.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -19,24 +18,22 @@ import java.util.Date;
 
 @Service
 @RequiredArgsConstructor
-public class AuthService {
+public class AuthServiceImpl implements AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
 
-    public AuthenticationResponse register(RegisterRequest request) {
-        // Check if user already exists
-        User userExists = this.userRepository.findByEmail(request.getEmail()).orElse(null);
-
+    @Override
+    public AuthenticationResponse register(String email, String password) {
+        User userExists = this.userRepository.findByEmail(email).orElse(null);
         if (userExists != null) {
             throw new UserAlreadyExists("User already exists");
         }
 
-        // Save the new user
         User newUser = new User();
-        newUser.setEmail(request.getEmail());
-        newUser.setPassword(passwordEncoder.encode(request.getPassword()));
+        newUser.setEmail(email);
+        newUser.setPassword(passwordEncoder.encode(password));
         Date now = new Date();
         newUser.setCreatedAt(now);
         newUser.setUpdatedAt(now);
@@ -44,13 +41,18 @@ public class AuthService {
 
         User user = this.userRepository.save(newUser);
 
-        String token = jwtService.generateToken(user);
-        return AuthenticationResponse.builder().token(token).build();
+        return generateToken(user);
     }
 
-    public AuthenticationResponse login(AuthenticationRequest request) {
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
-        String token = jwtService.generateToken((User) authentication.getPrincipal());
+    @Override
+    public AuthenticationResponse login(String email, String password) {
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
+
+        return generateToken((User) authentication.getPrincipal());
+    }
+
+    private AuthenticationResponse generateToken(User user) {
+        String token = jwtService.generateToken(user);
         return AuthenticationResponse.builder().token(token).build();
     }
 }

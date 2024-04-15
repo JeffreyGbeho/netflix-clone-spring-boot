@@ -4,6 +4,8 @@ import com.app.netflixapi.config.AuthenticationUserProvider;
 import com.app.netflixapi.entities.User;
 import com.app.netflixapi.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -16,9 +18,9 @@ public class UserService {
         String email = this.authenticationUserProvider.getAuthenticatedEmail();
 
         if (email == null) {
-            throw new RuntimeException("No email found");
+            throw new AccessDeniedException("Token subject invalid");
         }
 
-        return this.userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
+        return this.userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
 }

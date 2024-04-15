@@ -4,15 +4,19 @@ import com.app.netflixapi.config.AuthenticationUserProvider;
 import com.app.netflixapi.entities.Category;
 import com.app.netflixapi.entities.Movie;
 import com.app.netflixapi.entities.Profile;
+import com.app.netflixapi.exceptions.MovieNotFoundException;
+import com.app.netflixapi.exceptions.ProfileAcessDeniedException;
+import com.app.netflixapi.exceptions.ProfileNotFound;
 import com.app.netflixapi.repositories.CategoryRepository;
 import com.app.netflixapi.repositories.MovieRepository;
 import com.app.netflixapi.repositories.ProfileRepository;
+import com.app.netflixapi.services.interfaces.MovieService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
-import reactor.core.publisher.Mono;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -23,15 +27,17 @@ import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
-public class MovieService {
+public class MovieServiceImpl implements MovieService {
     private final ResourceLoader resourceLoader;
     private final MovieRepository movieRepository;
     private final AuthenticationUserProvider authenticationUserProvider;
     private final CategoryRepository categoryRepository;
     private final ProfileRepository profileRepository;
 
-    private static final String FORMAT  = "classpath:videos/%s.mp4";
+    @Value("${directory.movies}")
+    private static String FORMAT;
 
+    @Override
     public StreamingResponseBody streamingMovie(Long movieId) throws IOException {
         Movie movie = movieRepository.findById(movieId).orElseThrow(() -> new RuntimeException("Movie not found"));
 
@@ -49,14 +55,17 @@ public class MovieService {
         return responseBody;
     }
 
+    @Override
     public List<Movie> getAllMovies() {
         return movieRepository.findAll();
     }
 
+    @Override
     public Movie getMovieById(Long id) {
         return movieRepository.findById(id).orElseThrow();
     }
 
+    @Override
     public void addMovieToList(Long id, Long profileId) {
         Profile profile = this.getProfile(profileId);
 
@@ -68,6 +77,7 @@ public class MovieService {
         profileRepository.save(profile);
     }
 
+    @Override
     public void removeMovieToList(Long id, Long profileId) {
         Profile profile = this.getProfile(profileId);
 
@@ -79,12 +89,14 @@ public class MovieService {
         profileRepository.save(profile);
     }
 
+    @Override
     public Set<Movie> getFavourites(Long profileId) {
         Profile profile = this.getProfile(profileId);
 
         return profile.getFavourites();
     }
 
+    @Override
     public Set<Movie> getMoviesByCategory(String categoryName) {
         Category category = categoryRepository.findByName(categoryName).orElseThrow();
 
@@ -94,10 +106,10 @@ public class MovieService {
     private Profile getProfile(Long profileId) {
         String email = authenticationUserProvider.getAuthenticatedEmail();
 
-        Profile profile = profileRepository.findById(profileId).orElseThrow(() -> new RuntimeException("Profile not found"));
+        Profile profile = profileRepository.findById(profileId).orElseThrow(() -> new ProfileNotFound("Profile not found"));
 
         if (!profile.getUser().getEmail().equals(email)) {
-            throw new RuntimeException("Profile not match with user");
+            throw new ProfileAcessDeniedException("Profile doesn't match the user");
         }
 
         return profile;
@@ -107,10 +119,10 @@ public class MovieService {
         Resource resource = resourceLoader.getResource(String.format(FORMAT, title));
         String videoFilePath = resource.getFile().getAbsolutePath();
 
-        // Vérifier si la vidéo existe
+        // Check if the movie exists
         File videoFile = new File(videoFilePath);
         if (!videoFile.exists()) {
-            throw new RuntimeException("La vidéo demandée n'existe pas");
+            throw new MovieNotFoundException("The movie doesn't exist");
         }
 
         return new FileInputStream(videoFile);

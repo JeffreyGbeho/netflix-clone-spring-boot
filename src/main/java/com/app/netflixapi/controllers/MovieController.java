@@ -61,23 +61,23 @@ public class MovieController {
 
     }
 
-    @PutMapping("/{id}/favourite/add")
-    public void addMovieToList(@PathVariable Long id, @RequestBody FavouriteRequest request) {
+    @PutMapping("/favorite/add")
+    public void addMovieToList(@RequestBody FavouriteRequest request) {
         try {
-            log.info("PUT api/v1/movie/{}/favourite/add - START");
-            movieService.addMovieToList(id, request.getProfileId());
+            log.info("PUT api/v1/movie/favourite/add - START");
+            movieService.addMovieToList(request.getMovieId(), request.getProfileId());
         } finally {
-            log.info("PUT api/v1/movie/{}/favourite/add - DONE");
+            log.info("PUT api/v1/movie/favourite/add - DONE");
         }
     }
 
-    @PutMapping("/{id}/favourite/remove")
-    public void removeMovieToList(@PathVariable Long id, @RequestBody FavouriteRequest request) {
+    @PutMapping("/favorite/remove")
+    public void removeMovieToList(@RequestBody FavouriteRequest request) {
         try {
-            log.info("PUT api/v1/movie/{}/favourite/remove - START");
-            movieService.removeMovieToList(id, request.getProfileId());
+            log.info("PUT api/v1/movie/favourite/remove - START");
+            movieService.removeMovieToList(request.getMovieId(), request.getProfileId());
         } finally {
-            log.info("PUT api/v1/movie/{}/favourite/remove - DONE");
+            log.info("PUT api/v1/movie/favourite/remove - DONE");
         }
     }
 

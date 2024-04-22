@@ -10,5 +10,6 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class FavouriteRequest {
+    private Long movieId;
     private Long profileId;
 }

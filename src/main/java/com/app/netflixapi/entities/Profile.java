@@ -36,8 +36,8 @@ public class Profile {
     )
     private Set<Movie> favourites = new HashSet<>();
 
-    @JsonIgnore
-    public Set<Movie> getFavourites() {
-        return favourites;
-    }
+//    @JsonIgnore
+//    public Set<Movie> getFavourites() {
+//        return favourites;
+//    }
 }

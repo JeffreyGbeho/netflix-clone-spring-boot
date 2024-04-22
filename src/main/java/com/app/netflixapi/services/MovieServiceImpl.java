@@ -34,8 +34,8 @@ public class MovieServiceImpl implements MovieService {
     private final CategoryRepository categoryRepository;
     private final ProfileRepository profileRepository;
 
-    @Value("${directory.movies}")
-    private static String FORMAT;
+    @Value("${movies.path}")
+    private String FORMAT;
 
     @Override
     public StreamingResponseBody streamingMovie(Long movieId) throws IOException {

@@ -41,7 +41,7 @@ public class Movie {
     private Set<Profile> profileFavourites = new HashSet<>();
 
     @JsonIgnore
-    public Set<Profile> getUserFavourites() {
+    public Set<Profile> getProfileFavourites() {
         return profileFavourites;
     }
 }

@@ -19,7 +19,7 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
     private final CategoryRepository categoryRepository;
     private final MovieRepository movieRepository;
 
-    private static boolean alreadySetup = false;
+    private static boolean alreadySetup = true;
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
